@@ -16,6 +16,7 @@ def tuplelist2matrix(_l, dim):
     for e in l:
         matrix[iy][ix] = tuple2color(e)
         ix += 1
+
         if(ix >= dim[0]):
             ix = 0
             iy += 1
@@ -85,7 +86,8 @@ def rendermatrixoff(_matrix, offx, offy):
             y+=1
         x+=1
 
-def rendermatrix(matrix):
+def rendermatrix(_matrix):
+    matrix = _matrix
     x = 0
     for ex in matrix:
         y = 0
