@@ -120,6 +120,8 @@ if __name__ == "__main__":
 
     elems.append(image('image.jpg', 0, 0))
 
+    elems[0].renderinstant()
+    
     #elems.append(text("FPS: 0", 0, 0))
 
     #for i in elems:
@@ -137,9 +139,9 @@ if __name__ == "__main__":
 
         #mx.rendermatrix(a.render())
 
-        elems[0].renderinstant()
-        elems[0].x = elems[0].x + 1
-        elems[0].y = elems[0].y + 1
+        #elems[0].renderinstant()
+        #elems[0].x = elems[0].x + 1
+        #elems[0].y = elems[0].y + 1
 
         #elems[1].text = "FPS "+str(int(fps))
         #elems[1].renderinstant()
@@ -148,7 +150,7 @@ if __name__ == "__main__":
             if event.type == pygame.QUIT: sys.exit()
 
         pygame.display.flip()
-        popscreen()
+        #popscreen()
 
         try:
             fps = 1.0 / (time.time() - start_time)

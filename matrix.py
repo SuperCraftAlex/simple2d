@@ -6,6 +6,10 @@ _pixel = pixel
 _width = width
 _height = height
 
+def tuple2color(_i):
+    i = _i
+    return color(i[0],i[1],i[2])
+
 def tuplelist2matrix(_l, dim):
     l = list(_l)
 
@@ -13,18 +17,15 @@ def tuplelist2matrix(_l, dim):
 
     ix = 0
     iy = 0
+
     for e in l:
         matrix[iy][ix] = tuple2color(e)
         ix += 1
-
         if(ix >= dim[0]):
             ix = 0
             iy += 1
     
     return matrix
-
-def tuple2color(i):
-    return color(i[0],i[1],i[2])
 
 def emptymatrix(dx, dy):
     matrix = [[mty]*dy]*dx
@@ -107,6 +108,7 @@ def rendermatrixoff(_matrix, offx, offy):
 
 def rendermatrix(_matrix):
     matrix = _matrix
+    
     x = 0
     for ex in matrix:
         y = 0
@@ -124,21 +126,6 @@ def tuplemax(arr, index):
     return max
 
 def bresenhamtomatrix(_ni, c: color):
-    #ml = []
-    #cx = 0
-    #for ix in range(width):
-    #    cy = 0
-    #    ml.append([])
-    #    for iy in range(height):
-    #        ml[len(ml)-1].append(mty)
-    #        for i in list(ni):
-    #            if i[0] == cx and i[1] == cy:
-    #                ml[len(ml)-1][len(ml[len(ml)-1])-1] = c
-    #        cy += 1
-    #    cx +=1
-    #
-    #return ml
-
     ni = list(_ni)
 
     ml = emptymatrix(tuplemax(ni, 0)+1, tuplemax(ni, 1)+1)
