@@ -1,4 +1,4 @@
-from main import color,mty,pixel,height,width
+from main import color,mty,pixel,height,width, vector
 
 _color = color
 _mty = mty
@@ -42,6 +42,25 @@ def getdimensions(matrix):
     sx = len(list(matrix))
     sy = len(list(matrix)[0])
     return (sx,sy)
+
+def compactizeRight(matrix):
+    # TODO
+    return matrix
+
+def selection(matrix, v0: vector, v1:vector):
+    nmatrix = cloneempty(matrix)
+
+    x = 0
+    for ex in matrix:
+        y = 0
+        for ey in ex:
+            if x >= v0.x and x <= v1.x:
+                if y >= v0.y and y <= v1.y:
+                    nmatrix[ x - v0.x ][ y - v0.y ] = ey
+            y+=1
+        x+=1
+
+    return nmatrix
 
 def overlaymatrix(a, b, igc: color):
     x = 0
@@ -96,18 +115,35 @@ def rendermatrix(_matrix):
             y+=1
         x+=1
 
-def bresenhamtomatrix(ni, c: color):
-    ml = []
-    cx = 0
-    for ix in range(width):
-        cy = 0
-        ml.append([])
-        for iy in range(height):
-            ml[len(ml)-1].append(mty)
-            for i in list(ni):
-                if i[0] == cx and i[1] == cy:
-                    ml[len(ml)-1][len(ml[len(ml)-1])-1] = c
-            cy += 1
-        cx +=1
+def tuplemax(arr, index):
+    max = 0
+    for i in arr:
+        e = i[index]
+        if e > max:
+            max = e
+    return max
+
+def bresenhamtomatrix(_ni, c: color):
+    #ml = []
+    #cx = 0
+    #for ix in range(width):
+    #    cy = 0
+    #    ml.append([])
+    #    for iy in range(height):
+    #        ml[len(ml)-1].append(mty)
+    #        for i in list(ni):
+    #            if i[0] == cx and i[1] == cy:
+    #                ml[len(ml)-1][len(ml[len(ml)-1])-1] = c
+    #        cy += 1
+    #    cx +=1
+    #
+    #return ml
+
+    ni = list(_ni)
+
+    ml = emptymatrix(tuplemax(ni, 0)+1, tuplemax(ni, 1)+1)
+
+    for i in ni:
+        ml = putpixel(ml, i[0], i[1], c)
 
     return ml

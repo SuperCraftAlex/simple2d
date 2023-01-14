@@ -2,10 +2,10 @@ import sys, pygame
 import random, time
 import numpy as np
 from bresenham import bresenham
-from font import fontlist
 import algo
 import matrix as mx
 from PIL import Image
+import font
 
 width, height = 500, 500
 
@@ -93,13 +93,9 @@ class text(renderobject):
         self.text = _text
         self.x = _x
         self.y = _y
-    def renderinstant(self):
-        o = 0
 
-        for letter in self.text:
-            pixellist = mx.colorize(fontlist[letter], color(255,0,0))
-            mx.rendermatrixoff(pixellist,o,0)
-            o += 7
+    def renderinstant(self):
+        pass
 
 class image(renderobject):
     def __init__(self, _path: str, _x, _y):
@@ -114,6 +110,8 @@ class image(renderobject):
 
 if __name__ == "__main__":
 
+    font.initfont()
+
     fps = 0
     
     elems = []
@@ -121,17 +119,14 @@ if __name__ == "__main__":
     #elems.append(text("HALLO DAS IST EIN TEST", 0, 0))
 
     elems.append(image('image.jpg', 0, 0))
-    elems.append(image('image.jpg', 0, 500))
 
-    elems.append(text("FPS: 0", 0, 0))
+    #elems.append(text("FPS: 0", 0, 0))
 
     #for i in elems:
     #    i.renderinstant()
 
-    # a = line(vector(10,10), vector(100,100), color(255, 0, 0))
-    # b = a.render()
-    # rendermatrix(b)
-
+    #a = line(vector(10,10), vector(100,100), color(255, 0, 0))
+    
     # elems.append(triangle(vector(10,50), vector(80,10), vector(80,100), color(255,0,0)))
 
     #for i in elems:
@@ -140,16 +135,14 @@ if __name__ == "__main__":
     while True:
         start_time = time.time()
 
+        #mx.rendermatrix(a.render())
+
         elems[0].renderinstant()
         elems[0].x = elems[0].x + 1
         elems[0].y = elems[0].y + 1
 
-        elems[1].renderinstant()
-        elems[1].x = elems[1].x + 1
-        elems[1].y = elems[1].y - 1
-
-        elems[2].text = "FPS "+str(int(fps))
-        elems[2].renderinstant()
+        #elems[1].text = "FPS "+str(int(fps))
+        #elems[1].renderinstant()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT: sys.exit()
@@ -157,4 +150,6 @@ if __name__ == "__main__":
         pygame.display.flip()
         popscreen()
 
-        fps = 1.0 / (time.time() - start_time)
+        try:
+            fps = 1.0 / (time.time() - start_time)
+        except: pass
