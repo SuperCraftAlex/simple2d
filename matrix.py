@@ -59,19 +59,72 @@ def isEmptyColum(c):
         return True
     return False
 
-def compactizeTop(matrix):
+def compactize(matrix):
     offX = 0
+    offY = 0
+    width = len(matrix[0])
+    height = len(matrix)
 
-    for c in matrix:
-        if not isEmptyColum(c):
+    # Find the offset for empty columns
+    for i in range(width):
+        empty = True
+        for j in range(height):
+            if matrix[j][i] != mty:
+                empty = False
+                break
+        if empty:
+            offX += 1
+        else:
             break
-        offX+=1
+    
+    # Find the offset for empty rows
+    for i in range(height):
+        empty = True
+        for j in range(width):
+            if matrix[i][j] != mty:
+                empty = False
+                break
+        if empty:
+            offY += 1
+        else:
+            break
+    
+    # Cut the matrix
+    matrix = [row[offX:] for row in matrix[offY:]]
 
-    return matrix[offX:], offX
+    return matrix, offX, offY
 
-def compactizeLeft(matrix):
-    # TODO
-    return matrix
+#def compactizeTop(matrix):
+#    offX = 0
+#
+#    for c in matrix:
+#        if not isEmptyColum(c):
+#            break
+#        offX+=1
+#
+#    return matrix[offX:], offX
+#
+#def compactizeLeftSlow(matrix):
+#    m = rot90(matrix)
+#    m,o = compactizeTop(m)
+#    m = rot90(m)
+#    m = rot90(m)
+#    m = rot90(m)
+#    return m,o
+
+def rot90(matrix):
+    d = getdimensions(matrix)
+    nmatrix = emptymatrix(d[1], d[0])
+
+    x = 0
+    for ex in matrix:
+        y = 0
+        for ey in ex:
+            nmatrix[y][x] = ey
+            y+=1
+        x+=1
+    
+    return nmatrix
 
 def selection(matrix, v0: vector, v1:vector):
     nmatrix = cloneempty(matrix)

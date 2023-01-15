@@ -153,34 +153,32 @@ if __name__ == "__main__":
 
     #elems.append(image('image.jpg'))
 
-    testimage = image('image.jpg')
-    testimage.angle = 45
+    #testimage = image('image.jpg')
 
     mlX = line(vector(0, 0), vector(0,height), color_green)
     mlY = line(vector(0, 0), vector(width,0), color_green)
     
-    #elems.append(triangle(vector(10,50), vector(80,10), vector(80,100), color(255,0,0)))
+    elems.append(triangle(vector(10,50), vector(80,10), vector(80,100), color(255,0,0)))
 
     while True:
         start_time = time.time()
 
         
 
-        mx.rendermatrixoff(testimage.render(), 100, 100)
+        #mx.rendermatrixoff(testimage.render(), 100, 100)
 
         for i in elems:
-            mx.rendermatrix( i.render())
-
+            mx.rendermatrixoff( i.render() , 100, 100)
 
 
         x, y = pygame.mouse.get_pos()
         mlX.v1, mlX.v2 = vector(y,0), vector(y, width)
         mlY.v1, mlY.v2 = vector(0,x), vector(height,x)
 
-        mlXt = mx.compactizeTop(mlX.render())
-        mx.rendermatrixofftransparent(mlXt[0], 0, mlXt[1])
-        mx.rendermatrixtransparent(mlY.render())
-
+        mlXt = mx.compactize(mlX.render())
+        mx.rendermatrixofftransparent(mlXt[0], mlXt[1], mlXt[2])
+        mlYt = mx.compactize(mlY.render())
+        mx.rendermatrixofftransparent(mlYt[0], mlYt[1], mlYt[2])
 
 
         for event in pygame.event.get():

@@ -55,31 +55,21 @@ def rotate(testmatrix, angle):
                 pass
     return rotated_matrix
 
-# B R O K E N !!!!!!!!!!!!!
-def flood_fill(_matrix, x ,y, new):
-    matrix = mx.convert0toMTY(_matrix)
-
-    omatrix = mx.cloneempty(matrix)
-
-    def rec(x, y, new):
-        # we need the x and y of the start position, the old value,
-        # and the new value
-        # the flood fill has 4 parts
-        # firstly, make sure the x and y are inbounds
-        if y < 0 or y >= len(matrix[0]) or x < 0 or x >= len(matrix):
-            return
-        # secondly, check if the current position equals the old value
-        if matrix[y][x] != mty:
-            return
-
-        # thirdly, set the current position to the new value
-        omatrix[y][x] = new
-        # fourthly, attempt to fill the neighboring positions
-        rec(x+1, y, new)
-        rec(x-1, y, new)
-        rec(x, y+1, new)
-        rec(x, y-1, new)
-
-    rec(x, y, new)
-
-    return omatrix
+def fill(matrix, x, y, color):
+    start_color = matrix[x][y]
+    if start_color == color:
+        return matrix
+    queue = [(x, y)]
+    while queue:
+        x, y = queue.pop(0)
+        if matrix[x][y] == start_color:
+            matrix[x][y] = color
+            if x > 0:
+                queue.append((x-1, y))
+            if x < len(matrix)-1:
+                queue.append((x+1, y))
+            if y > 0:
+                queue.append((x, y-1))
+            if y < len(matrix[0])-1:
+                queue.append((x, y+1))
+    return matrix
