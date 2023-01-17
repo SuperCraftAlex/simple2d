@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
 
         for i in elems:
-            mx.rendermatrixoff(i.render() , 100, 100)
+            mx.rendermatrixoff(i.render(), 0, 0)
 
 
         if not cfg_usewin32api:

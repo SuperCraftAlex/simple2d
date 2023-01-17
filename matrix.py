@@ -169,25 +169,38 @@ def overlaymatrix(matrix2, matrix1): # lays matrix2 over matrix1
     
     return matrix1
 
-def overlaymatrixoff(matrix2, matrix1, offx, offy):
-    import copy
-    matrix1 = copy.deepcopy(matrix1)
-    rows1, cols1 = len(matrix1), len(matrix1[0])
-    rows2, cols2 = len(matrix2), len(matrix2[0])
-    offset_row, offset_col = (offx, offy)
+def isblank(p):
+    if p == mty or p == 0:
+        return True
+    try:
+        if p.r == 0 and p.g == 0 and p.b == 0:
+            return True
+    except: pass
+    return False
 
-    # Increase the size of matrix1 if necessary
-    if rows1 < rows2 + offset_row or cols1 < cols2 + offset_col:
-        diff_rows = max(0, (rows2 + offset_row) - rows1)
-        diff_cols = max(0, (cols2 + offset_col) - cols1)
-        matrix1 = [[0 for _ in range(cols1+diff_cols)] for _ in range(rows1+diff_rows)]
+def internal_looptrough(matrix, funct):
+    a,b = getdimensions(matrix)
 
-    for row in range(rows2):
-        for col in range(cols2):
-            if matrix2[row][col] != 0:
-                matrix1[row + offset_row][col + offset_col] = matrix2[row][col]
+    for row in range(a):
+        for col in range(b):
+            funct(row, col)
 
-    return matrix1
+def overlaymatrixoff(matrix1, matrix2, offx, offy):
+    d = maxdimensionsoff(matrix1, offx, offy, matrix2, 0, 0)
+    m = emptymatrix(d[0], d[1])
+
+    def l(row,col):
+        try:
+                m[row][col] = matrix2[row][col]
+        except: pass
+        try:
+            if not isblank(matrix1[row][col]):
+                m[row+offx][col+offy] = matrix1[row][col]
+        except: pass
+
+    internal_looptrough(m, l)
+
+    return m
 
 def cloneempty(matrix):
     d = getdimensions(matrix)

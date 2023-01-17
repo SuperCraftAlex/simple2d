@@ -92,7 +92,7 @@ class text(renderobject):
     def render(self):
         matrix = mx.emptymatrix(1,1)
         o = 0
-        for i in self.text:
+        for i in str(self.text):
             matrix = mx.overlaymatrixoff(font.get(i),matrix,0,o*12)
             #mx.rendermatrixoff(font.get(i), o*12, 0)
             o += 1
