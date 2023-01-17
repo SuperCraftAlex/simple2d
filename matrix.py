@@ -1,4 +1,5 @@
-from main import color,mty,pixel,height,width, vector
+from main import mty,pixel,height,width, vector
+from api import *
 import numpy as np
 
 _color = color
@@ -9,7 +10,13 @@ _height = height
 
 def tuple2color(_i):
     i = _i
-    return color(i[0],i[1],i[2])
+    try:
+        return color(i[0],i[1],i[2])
+    except:
+        if i > 120:
+            return mty
+        if i < 120:
+            return color(255,255,255)
 
 def convert0toMTY(matrix):
     x = 0
@@ -127,19 +134,7 @@ def rot90(matrix):
     return nmatrix
 
 def selection(matrix, v0: vector, v1:vector):
-    nmatrix = cloneempty(matrix)
-
-    x = 0
-    for ex in matrix:
-        y = 0
-        for ey in ex:
-            if x >= v0.x and x <= v1.x:
-                if y >= v0.y and y <= v1.y:
-                    nmatrix[ x - v0.x ][ y - v0.y ] = ey
-            y+=1
-        x+=1
-
-    return nmatrix
+    return [row[v0.y:v1.y] for row in matrix[v0.x:v1.x]]
 
 def maxdimensions(a, b):
     da = getdimensions(a)
@@ -150,24 +145,49 @@ def maxdimensions(a, b):
 
     return [mx,my]
 
-def overlaymatrix(a, b):
-    d = maxdimensions(a,b)
-    nm = emptymatrix(d[0], d[1])
+def maxdimensionsoff(a, aoffx, aoffy, b, boffx, boffy):
+    da = getdimensions(a)
+    db = getdimensions(b)
 
-    x = 0
-    for ex in a:
-        y = 0
-        for ey in ex:
-            if not (ey == mty or ey == 0):
-                nm[x][y] = ey
-            else:
-                try:
-                    nm[x][y] = b[x][y]
-                except: pass
-            y+=1
-        x+=1
+    mx = max(da[0]+aoffx, db[0]+boffx)
+    my = max(da[1]+boffy, db[1]+aoffy)
 
-    return nm
+    return [mx,my]
+
+def overlaymatrix(matrix2, matrix1): # lays matrix2 over matrix1
+    rows1 = len(matrix1)
+    cols1 = len(matrix1[0])
+    rows2 = len(matrix2)
+    cols2 = len(matrix2[0])
+    
+    if rows1 < rows2 or cols1 < cols2:
+        matrix1 = [[0 for _ in range(cols2)] for _ in range(rows2)]
+    
+    for i in range(rows2):
+        for j in range(cols2):
+            matrix1[i][j] = matrix2[i][j]
+    
+    return matrix1
+
+def overlaymatrixoff(matrix2, matrix1, offx, offy):
+    import copy
+    matrix1 = copy.deepcopy(matrix1)
+    rows1, cols1 = len(matrix1), len(matrix1[0])
+    rows2, cols2 = len(matrix2), len(matrix2[0])
+    offset_row, offset_col = (offx, offy)
+
+    # Increase the size of matrix1 if necessary
+    if rows1 < rows2 + offset_row or cols1 < cols2 + offset_col:
+        diff_rows = max(0, (rows2 + offset_row) - rows1)
+        diff_cols = max(0, (cols2 + offset_col) - cols1)
+        matrix1 = [[0 for _ in range(cols1+diff_cols)] for _ in range(rows1+diff_rows)]
+
+    for row in range(rows2):
+        for col in range(cols2):
+            if matrix2[row][col] != 0:
+                matrix1[row + offset_row][col + offset_col] = matrix2[row][col]
+
+    return matrix1
 
 def cloneempty(matrix):
     d = getdimensions(matrix)
