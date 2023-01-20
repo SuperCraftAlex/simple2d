@@ -1,4 +1,4 @@
-from main import mty,pixel,height,width, vector
+from main import mty,pixel,height,width,vector
 from api import *
 import numpy as np
 
@@ -101,24 +101,6 @@ def compactize(matrix):
 
     return matrix, offX, offY
 
-#def compactizeTop(matrix):
-#    offX = 0
-#
-#    for c in matrix:
-#        if not isEmptyColum(c):
-#            break
-#        offX+=1
-#
-#    return matrix[offX:], offX
-#
-#def compactizeLeftSlow(matrix):
-#    m = rot90(matrix)
-#    m,o = compactizeTop(m)
-#    m = rot90(m)
-#    m = rot90(m)
-#    m = rot90(m)
-#    return m,o
-
 def rot90(matrix):
     d = getdimensions(matrix)
     nmatrix = emptymatrix(d[1], d[0])
@@ -170,8 +152,12 @@ def overlaymatrix(matrix2, matrix1): # lays matrix2 over matrix1
     return matrix1
 
 def isblank(p):
-    if p == mty or p == 0:
+    if p == None:
         return True
+    try:
+        if p == 0:
+            return True
+    except:pass
     try:
         if p.r == 0 and p.g == 0 and p.b == 0:
             return True
@@ -185,18 +171,41 @@ def internal_looptrough(matrix, funct):
         for col in range(b):
             funct(row, col)
 
-def overlaymatrixoff(matrix1, matrix2, offx, offy):
+def cany(a):
+    return not isblank(a)
+
+def ccol(c):
+    print(c)
+    try: return color(c.r, c.g, c.b)
+    except: return color(0,0,0)
+
+def stc(m):
+    nm = cloneempty(m)
+    def l(row,col):
+        nm[row][col] = ccol(m)
+
+    internal_looptrough(m, l)
+    return nm
+
+def overlaymatrixoff(_matrix1, _matrix2, offx, offy):
+    matrix1 = stc(_matrix1)
+    matrix2 = stc(_matrix2)
+
     d = maxdimensionsoff(matrix1, offx, offy, matrix2, 0, 0)
     m = emptymatrix(d[0], d[1])
 
+    def l2(row,col):
+        try: m1=matrix2[row][col]; 
+        except: pass
+
+    internal_looptrough(m, l2)
+
     def l(row,col):
-        try:
-                m[row][col] = matrix2[row][col]
-        except: pass
-        try:
-            if not isblank(matrix1[row][col]):
-                m[row+offx][col+offy] = matrix1[row][col]
-        except: pass
+        m1 = None; 
+        try: m1=matrix1[row][col]; 
+        except:pass
+        if cany(m1):
+            m[row+offx][col+offy] = m1
 
     internal_looptrough(m, l)
 

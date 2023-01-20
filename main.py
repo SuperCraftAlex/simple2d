@@ -7,11 +7,12 @@ from PIL import Image
 import font
 from api import *
 import const
+import win32gui
 
 
 
 # MASTER CONFIG (BUILDSIDE)
-cfg_usewin32api = False
+cfg_usewin32api = False      # use win32gui instaead of pygame. not recommented due to slowness!
 
 if cfg_usewin32api:
     import win32api
@@ -19,6 +20,10 @@ if cfg_usewin32api:
     width, height = win32api.GetSystemMetrics(0), win32api.GetSystemMetrics(1)
 else:
     width, height = 1000, 1000
+
+if cfg_usewin32api:
+    hwnd = win32gui.WindowFromPoint((0,0))
+    monitor = (0, 0, win32api.GetSystemMetrics(0), win32api.GetSystemMetrics(1))
 
 if cfg_usewin32api:
     import win32gui
@@ -38,22 +43,19 @@ if cfg_usewin32api:
     dc = win32gui.GetDC(0)
 
 def pixel(x, y, c):
-    if ccomp(c, mty):
+    if mx.isblank(c):
         return
     if (cfg_usewin32api):
         try:
             win32gui.SetPixel(dc, x, y, win32api.RGB(c.r, c.g, c.b))
         except:
             pass
-        const.drawed.append((x,y))
     else:
         screen.set_at((x, y),(c.r, c.g, c.b))
 
 def popscreen():
     if cfg_usewin32api:
-        for i in const.drawed:
-            win32gui.GetPixel(dc, i[0], i[1])
-        const.drawed = []
+        win32gui.InvalidateRect(0, monitor, True)
     else:
         #cheaty:
 
@@ -89,21 +91,27 @@ if __name__ == "__main__":
     
     elems = []
 
-    elems.append( text("Hallo") )
 
     for i in apps:
             i[0]()
 
-    while True:
-        start_time = time.time()
+    frame = -1
 
+    elems.append((10 , lambda a: text("Hallo! Der Text funktioniert ENDLICH!", (lambda i: trit(algo.scale(i[0], a, a), i[1]*a, i[2]*a)))))
+
+    while True:
+        frame += 1
+        start_time = time.time()
         
         for i in apps:
             i[1]()
 
 
         for i in elems:
-            mx.rendermatrixoff(i.render(), 0, 0)
+            x = i[1](i[0])
+            for o in x.render():
+                try:mx.rendermatrixoff(o[0], o[1], o[2])
+                except:pass
 
 
         if not cfg_usewin32api:

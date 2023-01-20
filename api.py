@@ -21,7 +21,7 @@ class renderobject:
     def render(self):
         return []
 
-class line(renderobject):
+class line():
     def __init__(self, _v1: vector, _v2: vector, _c: color):
         self.v1 = _v1
         self.v2 = _v2
@@ -55,9 +55,10 @@ class rect2point(renderobject):
         m4 = self.l4.render()
 
         if self.angle == 0:
-            return mx.overlaymatrix(mx.overlaymatrix(mx.overlaymatrix(m3, m4), m2), m)
+            return [(m,0,0),(m2,0,0),(m3,0,0)(m4,0,0)]
         else:
-            return algo.rotate(mx.overlaymatrix(mx.overlaymatrix(mx.overlaymatrix(m3, m4), m2), m), self.angle)
+            print("rect rotation not supported yet due to lazyness")
+            return False
 
 class triangle(renderobject):
     def __init__(self, _v1: vector, _v2: vector, _v3: vector, _c: color):
@@ -79,28 +80,36 @@ class triangle(renderobject):
         m3 = self.l3.render()
 
         if self.angle == 0:
-            return mx.overlaymatrix(mx.overlaymatrix(m3, m2), m)
+            return [(m,0,0),(m2,0,0),(m3,0,0)]
         else:
-            return algo.rotate(mx.overlaymatrix(mx.overlaymatrix(m3, m2), m), self.angle)
+            return [(algo.rotate(m, self.angle),0,0),(algo.rotate(m2, self.angle),0,0),(algo.rotate(m3, self.angle),0,0)]
 
 
 class text(renderobject):
-    def __init__(self, _text: str):
+    
+    def __init__(self, _text: str, mixin):
         self.text = _text
         self.angle = 0
+        self.mixin = mixin
 
     def render(self):
-        matrix = mx.emptymatrix(1,1)
+        rl = []
         o = 0
         for i in str(self.text):
-            matrix = mx.overlaymatrixoff(font.get(i),matrix,0,o*12)
-            #mx.rendermatrixoff(font.get(i), o*12, 0)
+            rl.append((font.get(i), o*12, 0))
             o += 1
 
         if self.angle == 0:
-            return matrix
+            if self.mixin == None:
+                return rl
+            else:
+                nl = []
+                for i in rl:
+                    nl.append(self.mixin(i))
+                return nl
         else:
-            return algo.rotate(matrix, self.angle)
+            exit("rotation not supported for text yet bc of matrix overlay bugs")
+            return False
 
 
 class image(renderobject):
@@ -111,9 +120,9 @@ class image(renderobject):
 
     def render(self):
         if self.angle == 0:
-            return self.pix
+            return [(self.pix,0,0)]
         else:
-            return algo.rotate(self.pix, self.angle)
+            return [(algo.rotate(self.pix, self.angle),0,0)]
 
 class ab:
     def __init__(self, _a: vector, _b: vector):
@@ -126,6 +135,9 @@ class aabb:
         self.x2 = _x2
         self.y1 = _y1
         self.y1 = _y1
+
+def trit(a, b, c):
+    return (a, b, c)
 
 def ab2aabb(i: ab):
     return aabb(i.a.x, i.b.x, i.a.y, i.b.y)
@@ -140,12 +152,16 @@ def collissionPoint(c: ab, v: vector):
     return False
 
 def ccomp(c1, c2):
-    if c1 == 0:
-        c1 = mty
-    if c2 == 0:
-        c2 = mty
-    if (c1.r == c2.r) and (c1.g == c2.g) and (c1.b == c2.b):
-        return True
+    try:
+        if c1 == 0:
+            c1 = mty   
+        if c2 == 0:
+            c2 = mty   
+    except: pass
+    try:
+        if (c1.r == c2.r) and (c1.g == c2.g) and (c1.b == c2.b):
+            return True
+    except: return mty
     return False
 
 mty = color(0, 0, 0)

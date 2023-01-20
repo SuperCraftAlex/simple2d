@@ -70,6 +70,8 @@ def initfont():
         charlist2.append(s)
 
 def get(s):
+    if s == " ":
+        return mx.emptymatrix(1,1)
     s = str(s)
     if s in row0:
         return charlist0[row0.index(s)]
